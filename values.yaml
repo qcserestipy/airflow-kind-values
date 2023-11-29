@@ -34,7 +34,7 @@ redis:
 ####################
 ingress:
   web:
-    enabled: true
+    enabled: false
     ingressClassName: "nginx"
 
 ####################
