@@ -8,6 +8,14 @@ securityContext:
 
 executor: "KubernetesExecutor"
 
+createuserjob:  
+  useHelmHooks: false  
+  applyCustomEnv: false
+  
+migratedatabasejob:  
+  enabled: true  
+  useHelmHooks: false
+  
 logs:
   persistence:
     enabled: false
