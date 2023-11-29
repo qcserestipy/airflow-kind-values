@@ -17,7 +17,7 @@ migratedatabasejob:
   useHelmHooks: false
   applyCustomEnv: false
   jobAnnotations:
-    "argocd.argoproj.io/hook": Sync
+      argocd.argoproj.io/hook: Sync
   
 logs:
   persistence:
