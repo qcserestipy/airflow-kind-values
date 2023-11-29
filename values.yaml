@@ -1,0 +1,233 @@
+---
+uid: 50000
+gid: 0
+securityContext:
+  runAsUser: 50000
+  fsGroup: 0
+  runAsGroup: 0
+
+executor: "KubernetesExecutor"
+
+logs:
+  persistence:
+    enabled: false
+
+####################
+#     REDIS VALUES #
+####################
+redis:
+  enabled: false
+
+####################
+# INGRESS VALUES #
+####################
+ingress:
+  web:
+    enabled: true
+    ingressClassName: "nginx"
+
+####################
+# SCHEDULER VALUES #
+####################
+scheduler:
+  serviceAccount:
+    create: true
+  replicas: 1
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "1024Mi"
+    limits:
+      cpu: "2000m"
+      memory: "2048Mi"
+  safeToEvict: false
+  waitForMigrations:
+    enabled: true
+  logGroomerSidecar:
+    enabled: true
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+####################
+# WEBSERVER VALUES #
+####################
+webserver:
+  serviceAccount:
+    create: true
+  replicas: 1
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "1024Mi"
+    limits:
+      cpu: "2000m"
+      memory: "2048Mi"
+  defaultUser:
+    enabled: true
+    role: Admin
+    username: admin
+    email: admin@example.com
+    firstName: admin
+    lastName: user
+    password: admin
+  waitForMigrations:
+    enabled: true
+
+####################
+# TRIGGERER VALUES #
+####################
+triggerer:
+  enabled: true
+  serviceAccount:
+    create: true
+  replicas: 1
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "1024Mi"
+    limits:
+      cpu: "2000m"
+      memory: "2048Mi"
+  safeToEvict: false
+  keda:
+    enabled: false
+    namespaceLabels: {}
+    pollingInterval: 5
+    cooldownPeriod: 30
+    minReplicaCount: 1
+    maxReplicaCount: 10
+    query: >-
+      SELECT ceil(COUNT(*)::decimal / {{ .Values.config.triggerer.default_capacity }})
+      FROM trigger
+  persistence:
+    enabled: false
+    size: 100Gi
+    fixPermissions: true
+  waitForMigrations:
+    enabled: true 
+  logGroomerSidecar:
+    enabled: true
+    resources:
+      limits:
+        cpu: 250m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+####################
+# STATSD VALUES    #
+####################
+statsd:
+  enabled: true
+  serviceAccount:
+    create: true
+  uid: 65534
+  resources:
+    limits:
+      cpu: 250m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+####################
+# POSTGRES VALUES  #
+####################
+postgresql:
+  enabled: true
+  image:
+    tag: "11"
+  auth:
+    enablePostgresUser: true
+    postgresPassword: postgres
+    username: ""
+    password: ""
+pgbouncer:
+  enabled: true
+  serviceAccount:
+    create: true
+  uid: 65534
+  resources:
+    limits:
+      cpu: 250m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+####################
+# CLEANUP VALUES   #
+####################
+cleanup:
+  enabled: true
+  serviceAccount:
+    create: true
+  resources:
+    limits:
+      cpu: 250m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  schedule: "*/15 * * * *"
+  args: ["bash", "-c", "exec airflow kubernetes cleanup-pods --namespace={{ .Release.Namespace }}"]
+
+
+####################
+# DAGS VALUES   #
+####################
+dags:
+  persistence:
+    enabled: false
+  gitSync:
+    enabled: true
+    repo: https://github.com/apache/airflow.git
+    branch: v2-2-stable
+    rev: HEAD
+    depth: 1
+    maxFailures: 0
+    subPath: "tests/dags"
+    wait: 5
+    containerName: git-sync
+    uid: 65533
+    resources:
+     limits:
+      cpu: 100m
+      memory: 128Mi
+     requests:
+      cpu: 100m
+      memory: 128Mi
+
+####################
+# WORKER VALUES    #
+####################
+workers:
+  serviceAccount:
+    create: true
+  resources:
+    limits:
+      cpu: 250m
+      memory: 128Mi
+    requests:
+      cpu: 125m
+      memory: 64Mi
+  safeToEvict: false
+  persistence:
+    enabled: false
+  waitForMigrations:
+    enabled: true
+  logGroomerSidecar:
+    enabled: true
+    resources:
+      limits:
+        cpu: 250m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
