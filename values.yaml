@@ -1,3 +1,4 @@
+# @format
 ---
 uid: 50000
 gid: 0
@@ -6,19 +7,19 @@ securityContext:
   fsGroup: 0
   runAsGroup: 0
 
-executor: "KubernetesExecutor"
+executor: 'KubernetesExecutor'
 
-createUserJob:  
-  useHelmHooks: false  
+createUserJob:
+  useHelmHooks: false
   applyCustomEnv: false
-  
-migrateDatabaseJob:  
-  enabled: true  
+
+migrateDatabaseJob:
+  enabled: true
   useHelmHooks: false
   applyCustomEnv: false
   jobAnnotations:
-      argocd.argoproj.io/hook: Sync
-  
+    argocd.argoproj.io/hook: Sync
+
 logs:
   persistence:
     enabled: false
@@ -35,7 +36,7 @@ redis:
 ingress:
   web:
     enabled: false
-    ingressClassName: "nginx"
+    ingressClassName: 'nginx'
 
 ####################
 # SCHEDULER VALUES #
@@ -46,11 +47,11 @@ scheduler:
   replicas: 1
   resources:
     requests:
-      cpu: "250m"
-      memory: "128Mi"
+      cpu: '250m'
+      memory: '128Mi'
     limits:
-      cpu: "2000m"
-      memory: "2048Mi"
+      cpu: '2000m'
+      memory: '2048Mi'
   safeToEvict: false
   waitForMigrations:
     enabled: true
@@ -73,11 +74,11 @@ webserver:
   replicas: 1
   resources:
     requests:
-      cpu: "250m"
-      memory: "128Mi"
+      cpu: '250m'
+      memory: '128Mi'
     limits:
-      cpu: "2000m"
-      memory: "2048Mi"
+      cpu: '2000m'
+      memory: '2048Mi'
   defaultUser:
     enabled: true
     role: Admin
@@ -99,11 +100,11 @@ triggerer:
   replicas: 1
   resources:
     requests:
-      cpu: "250m"
-      memory: "250Mi"
+      cpu: '250m'
+      memory: '250Mi'
     limits:
-      cpu: "2000m"
-      memory: "2048Mi"
+      cpu: '2000m'
+      memory: '2048Mi'
   safeToEvict: false
   keda:
     enabled: false
@@ -113,14 +114,14 @@ triggerer:
     minReplicaCount: 1
     maxReplicaCount: 10
     query: >-
-      SELECT ceil(COUNT(*)::decimal / {{ .Values.config.triggerer.default_capacity }})
-      FROM trigger
+      SELECT ceil(COUNT(*)::decimal / {{
+      .Values.config.triggerer.default_capacity }}) FROM trigger
   persistence:
     enabled: false
     size: 100Gi
     fixPermissions: true
   waitForMigrations:
-    enabled: true 
+    enabled: true
   logGroomerSidecar:
     enabled: true
     resources:
@@ -153,12 +154,12 @@ statsd:
 postgresql:
   enabled: true
   image:
-    tag: "11"
+    tag: '11'
   auth:
     enablePostgresUser: true
     postgresPassword: postgres
-    username: ""
-    password: ""
+    username: ''
+    password: ''
 pgbouncer:
   enabled: true
   serviceAccount:
@@ -186,9 +187,13 @@ cleanup:
     requests:
       cpu: 100m
       memory: 128Mi
-  schedule: "*/15 * * * *"
-  args: ["bash", "-c", "exec airflow kubernetes cleanup-pods --namespace={{ .Release.Namespace }}"]
-
+  schedule: '*/15 * * * *'
+  args:
+    [
+      'bash',
+      '-c',
+      'exec airflow kubernetes cleanup-pods --namespace={{ .Release.Namespace }}',
+    ]
 
 ####################
 # DAGS VALUES   #
@@ -203,17 +208,17 @@ dags:
     rev: HEAD
     depth: 1
     maxFailures: 0
-    subPath: "tests/dags"
+    subPath: 'tests/dags'
     wait: 5
     containerName: git-sync
     uid: 65533
     resources:
-     limits:
-      cpu: 100m
-      memory: 128Mi
-     requests:
-      cpu: 100m
-      memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
 
 ####################
 # WORKER VALUES    #
