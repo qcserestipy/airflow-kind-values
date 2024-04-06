@@ -34,7 +34,7 @@ redis:
 ####################
 ingress:
   web:
-    enabled: true
+    enabled: false
     ingressClassName: "nginx"
 
 ####################
@@ -93,14 +93,14 @@ webserver:
 # TRIGGERER VALUES #
 ####################
 triggerer:
-  enabled: true
+  enabled: false
   serviceAccount:
     create: true
   replicas: 1
   resources:
     requests:
-      cpu: "1000m"
-      memory: "1024Mi"
+      cpu: "250m"
+      memory: "250Mi"
     limits:
       cpu: "2000m"
       memory: "2048Mi"
@@ -142,7 +142,7 @@ statsd:
   resources:
     limits:
       cpu: 250m
-      memory: 256Mi
+      memory: 128Mi
     requests:
       cpu: 100m
       memory: 128Mi
