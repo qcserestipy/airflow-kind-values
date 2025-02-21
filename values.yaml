@@ -35,8 +35,9 @@ redis:
 ####################
 ingress:
   web:
-    enabled: false
+    enabled: true
     ingressClassName: 'nginx'
+    host: 'local.airflow.com'
 
 ####################
 # SCHEDULER VALUES #
